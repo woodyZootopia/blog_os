@@ -3,12 +3,15 @@
 #![feature(custom_test_frameworks)]
 #![feature(abi_x86_interrupt)]
 #![feature(alloc_error_handler)]
+#![feature(alloc_layout_extra)]
+#![feature(const_fn)]
 #![test_runner(crate::test_runner)]
 #![reexport_test_harness_main = "test_main"]
 
 extern crate alloc;
 
 use core::panic::PanicInfo;
+use allocator::{Locked, LinkedListAllocator, BumpAllocator, HEAP_SIZE, HEAP_START};
 
 pub mod allocator;
 pub mod gdt;
@@ -18,7 +21,8 @@ pub mod serial;
 pub mod vga_buffer;
 
 #[global_allocator]
-static ALLOCATOR: allocator::Dummy = allocator::Dummy;
+//static ALLOCATOR: Locked<BumpAllocator> = Locked::new(unsafe{BumpAllocator::new(HEAP_START, HEAP_SIZE)});
+static ALLOCATOR: Locked<LinkedListAllocator> = Locked::new(LinkedListAllocator::new());
 
 pub fn init() {
     gdt::init();
