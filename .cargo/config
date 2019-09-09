@@ -3,3 +3,8 @@ target = "x86_64-blog_os.json"
 
 [target.'cfg(target_os = "none")']
 runner = "bootimage runner"
+
+[alias]
+ybuild = "build -Z build-std=core,alloc"
+yrun = "run -Z build-std=core,alloc"
+ytest = "test -Z build-std=core,alloc"
