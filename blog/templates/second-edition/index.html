@@ -21,11 +21,6 @@
     </p>
 </div>
 
-{% for translation in posts.0.translations %}
-    {{ translation.title }} {{ translation.lang }}<br>
-{% endfor %}
-{{lang}}
-
 <div id="bare-bones" class="post-category bare-bones">Bare Bones</div>
 <div class="posts bare-bones">
     {{ macros::post_link(page=posts.0) }}
