@@ -46,7 +46,7 @@ struct ListNode {
 
 impl ListNode {
     const fn new() -> Self {
-        Self {next : None, }
+        Self { next: None }
     }
 }
 
@@ -68,10 +68,10 @@ unsafe impl GlobalAlloc for Locked<FixedSizeBlockAllocator> {
                         let layout = Layout::from_size_align(block_size, block_align).unwrap();
                         allocator.backup_alloc(layout)
                     }
-                }           
+                }
             }
             None => allocator.backup_alloc(layout),
-        }        
+        }
     }
 
     #[allow(unused_unsafe)]
@@ -83,10 +83,12 @@ unsafe impl GlobalAlloc for Locked<FixedSizeBlockAllocator> {
                 next: allocator.list_heads[index].next.take(),
             };
             new_node_ptr.write(new_node);
-            allocator.list_heads[index].next = Some(unsafe { &mut *new_node_ptr});
+            allocator.list_heads[index].next = Some(unsafe { &mut *new_node_ptr });
         } else {
             unsafe {
-                allocator.backup_allocator.deallocate(NonNull::new(ptr).unwrap(), layout);
+                allocator
+                    .backup_allocator
+                    .deallocate(NonNull::new(ptr).unwrap(), layout);
             }
         }
     }
