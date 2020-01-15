@@ -1,6 +1,9 @@
 use super::Locked;
 use alloc::alloc::{GlobalAlloc, Layout};
-use core::ptr::{self, NonNull};
+use core::{
+    mem,
+    ptr::{self, NonNull},
+};
 
 /// The block sizes to use.
 ///
@@ -89,6 +92,9 @@ unsafe impl GlobalAlloc for Locked<FixedSizeBlockAllocator> {
             let new_node = ListNode {
                 next: allocator.list_heads[index].next.take(),
             };
+            // verify that block has size and alignment required for storing node
+            assert!(mem::size_of::<ListNode>() <= BLOCK_SIZES[index]);
+            assert!(mem::align_of::<ListNode>() <= BLOCK_SIZES[index]);
             new_node_ptr.write(new_node);
             allocator.list_heads[index].next = Some(unsafe { &mut *new_node_ptr });
         } else {
