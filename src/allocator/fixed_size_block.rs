@@ -42,6 +42,7 @@ impl FixedSizeBlockAllocator {
         self.fallback_allocator.init(heap_start, heap_size);
     }
 
+    /// Allocates using the fallback allocator.
     fn fallback_alloc(&mut self, layout: Layout) -> *mut u8 {
         match self.fallback_allocator.allocate_first_fit(layout) {
             Ok(ptr) => ptr.as_ptr(),
