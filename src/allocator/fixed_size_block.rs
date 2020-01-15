@@ -2,8 +2,15 @@ use super::Locked;
 use alloc::alloc::{GlobalAlloc, Layout};
 use core::ptr::{self, NonNull};
 
-const BLOCK_SIZES: &[usize] = &[8, 16, 32, 64, 128, 256, 512]; // must each be power of 2
+/// The block sizes to use.
+///
+/// The sizes must each be power of 2 because they are also used as
+/// the block alignment (alignments must be always powers of 2).
+const BLOCK_SIZES: &[usize] = &[8, 16, 32, 64, 128, 256, 512];
 
+/// Choose an appropriate block size for the given layout.
+///
+/// Returns an index into the `BLOCK_SIZES` array.
 fn list_index(layout: &Layout) -> Option<usize> {
     let block_size = layout.size().max(layout.align());
     BLOCK_SIZES.iter().position(|&s| s >= block_size)
