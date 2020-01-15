@@ -20,7 +20,7 @@ fn list_index(layout: &Layout) -> Option<usize> {
 }
 
 pub struct FixedSizeBlockAllocator {
-    list_heads: [ListNode; BLOCK_SIZES.len()],
+    list_heads: [Option<&'static mut ListNode>; BLOCK_SIZES.len()],
     fallback_allocator: linked_list_allocator::Heap,
 }
 
@@ -28,7 +28,7 @@ impl FixedSizeBlockAllocator {
     /// Creates an empty FixedSizeBlockAllocator.
     pub const fn new() -> Self {
         FixedSizeBlockAllocator {
-            list_heads: [ListNode::new(); BLOCK_SIZES.len()],
+            list_heads: [None; BLOCK_SIZES.len()],
             fallback_allocator: linked_list_allocator::Heap::empty(),
         }
     }
@@ -55,20 +55,14 @@ struct ListNode {
     next: Option<&'static mut ListNode>,
 }
 
-impl ListNode {
-    const fn new() -> Self {
-        Self { next: None }
-    }
-}
-
 unsafe impl GlobalAlloc for Locked<FixedSizeBlockAllocator> {
     unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
         let mut allocator = self.lock();
         match list_index(&layout) {
             Some(index) => {
-                match allocator.list_heads[index].next.take() {
+                match allocator.list_heads[index].take() {
                     Some(node) => {
-                        allocator.list_heads[index].next = node.next.take();
+                        allocator.list_heads[index] = node.next.take();
                         node as *mut ListNode as *mut u8
                     }
                     None => {
@@ -92,13 +86,13 @@ unsafe impl GlobalAlloc for Locked<FixedSizeBlockAllocator> {
             Some(index) => {
                 let new_node_ptr = ptr as *mut ListNode;
                 let new_node = ListNode {
-                    next: allocator.list_heads[index].next.take(),
+                    next: allocator.list_heads[index].take(),
                 };
                 // verify that block has size and alignment required for storing node
                 assert!(mem::size_of::<ListNode>() <= BLOCK_SIZES[index]);
                 assert!(mem::align_of::<ListNode>() <= BLOCK_SIZES[index]);
                 new_node_ptr.write(new_node);
-                allocator.list_heads[index].next = Some(unsafe { &mut *new_node_ptr });
+                allocator.list_heads[index] = Some(unsafe { &mut *new_node_ptr });
             }
             None => {
                 let ptr = NonNull::new(ptr).unwrap();
