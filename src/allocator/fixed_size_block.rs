@@ -21,7 +21,7 @@ fn list_index(layout: &Layout) -> Option<usize> {
 
 pub struct FixedSizeBlockAllocator {
     list_heads: [ListNode; BLOCK_SIZES.len()],
-    backup_allocator: linked_list_allocator::Heap,
+    fallback_allocator: linked_list_allocator::Heap,
 }
 
 impl FixedSizeBlockAllocator {
@@ -29,7 +29,7 @@ impl FixedSizeBlockAllocator {
     pub const fn new() -> Self {
         FixedSizeBlockAllocator {
             list_heads: [ListNode::new(); BLOCK_SIZES.len()],
-            backup_allocator: linked_list_allocator::Heap::empty(),
+            fallback_allocator: linked_list_allocator::Heap::empty(),
         }
     }
 
@@ -39,11 +39,11 @@ impl FixedSizeBlockAllocator {
     /// heap bounds are valid and that the heap is unused. This method must be
     /// called only once.
     pub unsafe fn init(&mut self, heap_start: usize, heap_size: usize) {
-        self.backup_allocator.init(heap_start, heap_size);
+        self.fallback_allocator.init(heap_start, heap_size);
     }
 
-    fn backup_alloc(&mut self, layout: Layout) -> *mut u8 {
-        match self.backup_allocator.allocate_first_fit(layout) {
+    fn fallback_alloc(&mut self, layout: Layout) -> *mut u8 {
+        match self.fallback_allocator.allocate_first_fit(layout) {
             Ok(ptr) => ptr.as_ptr(),
             Err(_) => ptr::null_mut(),
         }
@@ -76,11 +76,11 @@ unsafe impl GlobalAlloc for Locked<FixedSizeBlockAllocator> {
                         // only works if all block sizes are a power of 2
                         let block_align = block_size;
                         let layout = Layout::from_size_align(block_size, block_align).unwrap();
-                        allocator.backup_alloc(layout)
+                        allocator.fallback_alloc(layout)
                     }
                 }
             }
-            None => allocator.backup_alloc(layout),
+            None => allocator.fallback_alloc(layout),
         }
     }
 
@@ -100,7 +100,7 @@ unsafe impl GlobalAlloc for Locked<FixedSizeBlockAllocator> {
         } else {
             unsafe {
                 allocator
-                    .backup_allocator
+                    .fallback_allocator
                     .deallocate(NonNull::new(ptr).unwrap(), layout);
             }
         }
