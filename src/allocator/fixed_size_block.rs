@@ -88,21 +88,23 @@ unsafe impl GlobalAlloc for Locked<FixedSizeBlockAllocator> {
     #[allow(unused_unsafe)]
     unsafe fn dealloc(&self, ptr: *mut u8, layout: Layout) {
         let mut allocator = self.lock();
-        if let Some(index) = list_index(&layout) {
-            let new_node_ptr = ptr as *mut ListNode;
-            let new_node = ListNode {
-                next: allocator.list_heads[index].next.take(),
-            };
-            // verify that block has size and alignment required for storing node
-            assert!(mem::size_of::<ListNode>() <= BLOCK_SIZES[index]);
-            assert!(mem::align_of::<ListNode>() <= BLOCK_SIZES[index]);
-            new_node_ptr.write(new_node);
-            allocator.list_heads[index].next = Some(unsafe { &mut *new_node_ptr });
-        } else {
-            unsafe {
-                allocator
-                    .fallback_allocator
-                    .deallocate(NonNull::new(ptr).unwrap(), layout);
+        match list_index(&layout) {
+            Some(index) => {
+                let new_node_ptr = ptr as *mut ListNode;
+                let new_node = ListNode {
+                    next: allocator.list_heads[index].next.take(),
+                };
+                // verify that block has size and alignment required for storing node
+                assert!(mem::size_of::<ListNode>() <= BLOCK_SIZES[index]);
+                assert!(mem::align_of::<ListNode>() <= BLOCK_SIZES[index]);
+                new_node_ptr.write(new_node);
+                allocator.list_heads[index].next = Some(unsafe { &mut *new_node_ptr });
+            }
+            None => {
+                let ptr = NonNull::new(ptr).unwrap();
+                unsafe {
+                    allocator.fallback_allocator.deallocate(ptr, layout);
+                }
             }
         }
     }
