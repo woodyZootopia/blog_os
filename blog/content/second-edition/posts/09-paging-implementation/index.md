@@ -823,7 +823,11 @@ We first create the mapping for the page at address `0` by calling our `create_e
 
 Then we convert the page to a raw pointer and write a value to offset `400`. We don't write to the start of the page because the top line of the VGA buffer is directly shifted off the screen by the next `println`. We write the value `0x_f021_f077_f065_f04e`, which represents the string _"New!"_ on white background. As we learned [in the _“VGA Text Mode”_ post], writes to the VGA buffer should be volatile, so we use the [`write_volatile`] method.
 
+<!--
+TODO
 [in the _“VGA Text Mode”_ post]: @/second-edition/posts/03-vga-text-buffer/index.md#volatile
+-->
+
 [`write_volatile`]: https://doc.rust-lang.org/std/primitive.pointer.html#method.write_volatile
 
 When we run it in QEMU, we see the following output:

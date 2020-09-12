@@ -60,7 +60,7 @@ The chips implementing a serial interface are called [UARTs]. There are [lots of
 ### Port I/O
 There are two different approaches for communicating between the CPU and peripheral hardware on x86, **memory-mapped I/O** and **port-mapped I/O**. We already used memory-mapped I/O for accessing the [VGA text buffer] through the memory address `0xb8000`. This address is not mapped to RAM, but to some memory on the GPU.
 
-[VGA text buffer]: @/second-edition/posts/03-vga-text-buffer/index.md
+[VGA text buffer]: @/second-edition/posts/deprecated/03-vga-text-buffer/index.md
 
 In contrast, port-mapped I/O uses a separate I/O bus for communication. Each connected peripheral has one or more port numbers. To communicate with such an I/O port there are special CPU instructions called `in` and `out`, which take a port number and a data byte (there are also variations of these commands that allow sending an `u16` or `u32`).
 
@@ -105,7 +105,7 @@ lazy_static! {
 
 Like with the [VGA text buffer][vga lazy-static], we use `lazy_static` and a spinlock to create a `static`. However, this time we use `lazy_static` to ensure that the `init` method is called before first use. We're using the port address `0x3F8`, which is the standard port number for the first serial interface.
 
-[vga lazy-static]: @/second-edition/posts/03-vga-text-buffer/index.md#lazy-statics
+[vga lazy-static]: @/second-edition/posts/deprecated/03-vga-text-buffer/index.md#lazy-statics
 
 To make the serial port easily usable, we add `serial_print!` and `serial_println!` macros:
 

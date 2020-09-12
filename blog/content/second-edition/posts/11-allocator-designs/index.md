@@ -197,7 +197,10 @@ Before we look at a possible solution to this mutability problem, let's try to u
 Fortunately there is a way how to get a `&mut self` reference from a `&self` reference: We can use synchronized [interior mutability] by wrapping the allocator in a [`spin::Mutex`] spinlock. This type provides a `lock` method that performs [mutual exclusion] and thus safely turns a `&self` reference to a `&mut self` reference. We already used the wrapper type multiple times in our kernel, for example for the [VGA text buffer][vga-mutex].
 
 [interior mutability]: https://doc.rust-lang.org/book/ch15-05-interior-mutability.html
+<!--
+TODO
 [vga-mutex]: @/second-edition/posts/03-vga-text-buffer/index.md#spinlocks
+-->
 [`spin::Mutex`]: https://docs.rs/spin/0.5.0/spin/struct.Mutex.html
 [mutual exclusion]: https://en.wikipedia.org/wiki/Mutual_exclusion
 

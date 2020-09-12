@@ -505,7 +505,7 @@ We first create the mapping for the page at `0x1000` by calling our `create_exam
 
 Then we write the value `0xf021_f077_f065_f04e` to this page, which represents the string _"New!"_ on white background. We don't write directly to the beginning of the page at `0x1000` since the top line is directly shifted off the screen by the next `println`. Instead, we write to offset `0x900`, which is about in the middle of the screen. As we learned [in the _“VGA Text Mode”_ post], writes to the VGA buffer should be volatile, so we use the [`write_volatile`] method.
 
-[in the _“VGA Text Mode”_ post]: @/second-edition/posts/03-vga-text-buffer/index.md#volatile
+[in the _“VGA Text Mode”_ post]: @/second-edition/posts/deprecated/03-vga-text-buffer/index.md#volatile
 [`write_volatile`]: https://doc.rust-lang.org/std/primitive.pointer.html#method.write_volatile
 
 When we run it in QEMU, we see the following output:

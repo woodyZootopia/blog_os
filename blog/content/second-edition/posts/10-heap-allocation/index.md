@@ -64,14 +64,21 @@ When the `inner` function returns in the above example, it's part of the call st
 
 Apart from the `'static` lifetime, static variables also have the useful property that their location is known at compile time, so that no reference is needed for accessing it. We utilized that property for our `println` macro: By using a [static `Writer`] internally there is no `&mut Writer` reference needed to invoke the macro, which is very useful in [exception handlers] where we don't have access to any additional variables.
 
+<!--
+TODO
 [static `Writer`]: @/second-edition/posts/03-vga-text-buffer/index.md#a-global-interface
+-->
 [exception handlers]: @/second-edition/posts/05-cpu-exceptions/index.md#implementation
 
 However, this property of static variables brings a crucial drawback: They are read-only by default. Rust enforces this because a [data race] would occur if e.g. two threads modify a static variable at the same time. The only way to modify a static variable is to encapsulate it in a [`Mutex`] type, which ensures that only a single `&mut` reference exists at any point in time. We already used a `Mutex` for our [static VGA buffer `Writer`][vga mutex].
 
 [data race]: https://doc.rust-lang.org/nomicon/races.html
 [`Mutex`]: https://docs.rs/spin/0.5.2/spin/struct.Mutex.html
+
+<!--
+TODO
 [vga mutex]: @/second-edition/posts/03-vga-text-buffer/index.md#spinlocks
+-->
 
 ## Dynamic Memory
 

@@ -158,7 +158,10 @@ Together with the device name (`isa-debug-exit`), we pass the two parameters `io
 
 There are two different approaches for communicating between the CPU and peripheral hardware on x86, **memory-mapped I/O** and **port-mapped I/O**. We already used memory-mapped I/O for accessing the [VGA text buffer] through the memory address `0xb8000`. This address is not mapped to RAM, but to some memory on the VGA device.
 
+<!--
+TODO
 [VGA text buffer]: @/second-edition/posts/03-vga-text-buffer/index.md
+-->
 
 In contrast, port-mapped I/O uses a separate I/O bus for communication. Each connected peripheral has one or more port numbers. To communicate with such an I/O port there are special CPU instructions called `in` and `out`, which take a port number and a data byte (there are also variations of these commands that allow sending an `u16` or `u32`).
 
@@ -310,7 +313,10 @@ Like with the [VGA text buffer][vga lazy-static], we use `lazy_static` and a spi
 
 Like the `isa-debug-exit` device, the UART is programmed using port I/O. Since the UART is more complex, it uses multiple I/O ports for programming different device registers. The unsafe `SerialPort::new` function expects the address of the first I/O port of the UART as argument, from which it can calculate the addresses of all needed ports. We're passing the port address `0x3F8`, which is the standard port number for the first serial interface.
 
+<!--
+TODO
 [vga lazy-static]: @/second-edition/posts/03-vga-text-buffer/index.md#lazy-statics
+-->
 
 To make the serial port easily usable, we add `serial_print!` and `serial_println!` macros:
 

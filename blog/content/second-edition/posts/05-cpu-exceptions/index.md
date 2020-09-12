@@ -5,7 +5,7 @@ path = "cpu-exceptions"
 date  = 2018-06-17
 
 [extra]
-chapter = "Interrupts"
+chapter = "Exceptions"
 +++
 
 CPU exceptions occur in various erroneous situations, for example when accessing an invalid memory address or when dividing by zero. To react to them we have to set up an _interrupt descriptor table_ that provides handler functions. At the end of this post, our kernel will be able to catch [breakpoint exceptions] and to resume normal execution afterwards.
@@ -347,7 +347,10 @@ Fortunately the `lazy_static` macro exists. Instead of evaluating a `static` at 
 
 We already imported the `lazy_static` crate when we [created an abstraction for the VGA text buffer][vga text buffer lazy static]. So we can directly use the `lazy_static!` macro to create our static IDT:
 
+<!--
+TODO
 [vga text buffer lazy static]: @/second-edition/posts/03-vga-text-buffer/index.md#lazy-statics
+-->
 
 ```rust
 // in src/interrupts.rs

@@ -5,7 +5,8 @@ path = "vga-text-mode"
 date  = 2018-02-26
 
 [extra]
-chapter = "Bare Bones"
+warning_short = "Deprecated: "
+warning = "This post is deprecated in favor of the TODO posts and will no longer receive updates."
 +++
 
 The [VGA text mode] is a simple way to print text to the screen. In this post, we create an interface that makes its usage safe and simple, by encapsulating all unsafety in a separate module. We also implement support for Rust's [formatting macros].

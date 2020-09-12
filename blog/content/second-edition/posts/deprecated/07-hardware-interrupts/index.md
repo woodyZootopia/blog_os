@@ -5,7 +5,8 @@ path = "hardware-interrupts"
 date = 2018-10-22
 
 [extra]
-chapter = "Interrupts"
+warning_short = "Deprecated: "
+warning = "This post is deprecated in favor of the TODO posts and will no longer receive updates."
 +++
 
 In this post we set up the programmable interrupt controller to correctly forward hardware interrupts to the CPU. To handle these interrupts we add new entries to our interrupt descriptor table, just like we did for our exception handlers. We will learn how to get periodic timer interrupts and how to get input from the keyboard.
@@ -257,7 +258,7 @@ We now have a form of concurrency in our kernel: The timer interrupts occur asyn
 
 We can already provoke a deadlock in our kernel. Remember, our `println` macro calls the `vga_buffer::_print` function, which [locks a global `WRITER`][vga spinlock] using a spinlock:
 
-[vga spinlock]: @/second-edition/posts/03-vga-text-buffer/index.md#spinlocks
+[vga spinlock]: @/second-edition/posts/deprecated/03-vga-text-buffer/index.md#spinlocks
 
 ```rust
 // in src/vga_buffer.rs

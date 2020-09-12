@@ -42,7 +42,10 @@ The following graphic illustrates the task switching process on a hardware inter
 
 In the first row, the CPU is executing task `A1` of program `A`. All other tasks are paused. In the second row, a hardware interrupt arrives at the CPU. As described in the [_Hardware Interrupts_] post, the CPU immediately stops the execution of task `A1` and jumps to the interrupt handler defined in the interrupt descriptor table (IDT). Through this interrupt handler, the operating system now has control of the CPU again, which allows it to switch to task `B1` instead of continuing task `A1`.
 
+<!--
+TODO
 [_Hardware Interrupts_]: @/second-edition/posts/07-hardware-interrupts/index.md
+-->
 
 #### Saving State
 
@@ -1023,7 +1026,10 @@ Our simple executor does not utilize the `Waker` notifications and simply loops 
 
 We already have some kind of asynchronicity in our system that we can use for this: hardware interrupts. As we learned in the [_Interrupts_] post, hardware interrupts can occur at arbitrary points in time, determined by some external device. For example, a hardware timer sends an interrupt to the CPU after some predefined time elapsed. When the CPU receives an interrupt, it immediately transfers control to the corresponding handler function defined in the interrupt descriptor table (IDT).
 
+<!--
+TODO
 [_Interrupts_]: @/second-edition/posts/07-hardware-interrupts/index.md
+-->
 
 In the following, we will create an asynchronous task based on the keyboard interrupt. The keyboard interrupt is a good candidate for this because it is both non-deterministic and latency-critical. Non-deteministic means that there is no way to predict when the next key press will occur because it is entirely dependent on the user. Latency-critical means that we want to handle the keyboard input in a timely manner, otherwise the user will feel a lag. To support such a task in an efficient way, it will be essential that the executor has proper support for `Waker` notifications.
 
@@ -1367,7 +1373,10 @@ pub async fn print_keypresses() {
 
 The code is very similar to the code we had in our [keyboard interrupt handler] before we modified it in this post. The only difference is that, instead of reading the scancode from an I/O port, we take it from the `ScancodeStream`. For this, we first create a new `Scancode` stream and then repeatedly use the [`next`] method provided by the [`StreamExt`] trait to get a `Future` that resolves to the next element in the stream. By using the `await` operator on it, we asynchronously wait for the result of the future.
 
+<!--
+TODO
 [keyboard interrupt handler]: @/second-edition/posts/07-hardware-interrupts/index.md#interpreting-the-scancodes
+-->
 [`next`]: https://docs.rs/futures-util/0.3.4/futures_util/stream/trait.StreamExt.html#method.next
 [`StreamExt`]: https://docs.rs/futures-util/0.3.4/futures_util/stream/trait.StreamExt.html
 

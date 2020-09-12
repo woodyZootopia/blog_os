@@ -156,7 +156,10 @@ test-args = ["-device", "isa-debug-exit,iobase=0xf4,iosize=0x04"]
 ### I/O 端口
 在x86平台上，CPU和外围硬件通信通常有两种方式，**内存映射I/O**和**端口映射I/O**。之前，我们已经使用内存映射的方式，通过内存地址`0xb8000`访问了[VGA文本缓冲区]。该地址并没有映射到RAM，而是映射到了VGA设备的一部分内存上。
 
+<!--
+TODO
 [VGA text buffer]: @/second-edition/posts/03-vga-text-buffer/index.md
+-->
 
 与内存映射不同，端口映射I/O使用独立的I/O总线来进行通信。每个外围设备都有一个或数个端口号。CPU采用了特殊的`in`和`out`指令来和端口通信，这些指令要求一个端口号和一个字节的数据作为参数（有些这种指令的变体也允许发送`u16`或是`u32`长度的数据）。
 
@@ -309,7 +312,10 @@ lazy_static! {
 
 和 `isa-debug-exit`设备一样，UART也是用过I/O端口进行编程的。由于UART相对来讲更加复杂，它使用多个I/O端口来对不同的设备寄存器进行编程。不安全的`SerialPort::new`函数需要UART的第一个I/O端口的地址作为参数，从该地址中可以计算出所有所需端口的地址。我们传递的端口地址为`0x3F8` ，该地址是第一个串行接口的标准端口号。
 
+<!--
+TODO
 [vga lazy-static]: @/second-edition/posts/03-vga-text-buffer/index.md#lazy-statics
+-->
 
 为了使串口更加易用，我们添加了 `serial_print!` 和 `serial_println!`宏:
 
